@@ -1,0 +1,155 @@
+rudraroy@eecs583a:~/cse583_hw2/W25_CSE583_HW2$ ./compile.sh
+CMake Warning (dev) in CMakeLists.txt:
+  No project() command is present.  The top-level CMakeLists.txt file must
+  contain a literal, direct call to the project() command.  Add a line of
+  code such as
+
+    project(ProjectName)
+
+  near the top of the file, but after cmake_minimum_required().
+
+  CMake is pretending there is a "project(Project)" command on the first
+  line.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Registering HW2Pass as a pass plugin (static build: OFF)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /n/eecs583b/home/rudraroy/cse583_hw2/W25_CSE583_HW2/build
+make: Warning: File 'Makefile' has modification time 64 s in the future
+make[1]: Warning: File 'CMakeFiles/Makefile2' has modification time 64 s in the future
+make[2]: Warning: File 'hw2pass/CMakeFiles/HW2Pass.dir/progress.make' has modification time 64 s in the future
+Consolidate compiler generated dependencies of target HW2Pass
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.
+make[2]: Warning: File 'hw2pass/CMakeFiles/HW2Pass.dir/progress.make' has modification time 64 s in the future
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.
+[100%] Built target HW2Pass
+make[1]: warning:  Clock skew detected.  Your build may be incomplete.
+make: warning:  Clock skew detected.  Your build may be incomplete.
+Compile done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1520maxresident)k
+0inputs+0outputs (0major+67minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 84%CPU (0avgtext+0avgdata 1524maxresident)k
+0inputs+0outputs (0major+68minor)pagefaults 0swaps
+-e 
+
+
+Correctness 1 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1520maxresident)k
+0inputs+0outputs (0major+69minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 76%CPU (0avgtext+0avgdata 1568maxresident)k
+0inputs+0outputs (0major+70minor)pagefaults 0swaps
+-e 
+
+
+Correctness 2 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1576maxresident)k
+32inputs+0outputs (1major+70minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 77%CPU (0avgtext+0avgdata 1524maxresident)k
+0inputs+0outputs (0major+68minor)pagefaults 0swaps
+-e 
+
+
+Correctness 3 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1616maxresident)k
+32inputs+0outputs (1major+71minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 83%CPU (0avgtext+0avgdata 1524maxresident)k
+0inputs+0outputs (0major+68minor)pagefaults 0swaps
+-e 
+
+
+Correctness 4 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1516maxresident)k
+32inputs+0outputs (1major+68minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 90%CPU (0avgtext+0avgdata 1620maxresident)k
+0inputs+0outputs (0major+71minor)pagefaults 0swaps
+-e 
+
+
+Correctness 5 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+0.00user 0.00system 0:00.00elapsed 0%CPU (0avgtext+0avgdata 1576maxresident)k
+32inputs+0outputs (1major+70minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+0.00user 0.00system 0:00.00elapsed 90%CPU (0avgtext+0avgdata 1572maxresident)k
+0inputs+0outputs (0major+70minor)pagefaults 0swaps
+-e 
+
+
+Correctness 6 done
+Before plugin load
+-e 
+=== Program Correctness Validation ===
+-e >> Outputs match
+
+-e 1. Performance of unoptimized code
+7.48user 0.00system 0:07.48elapsed 99%CPU (0avgtext+0avgdata 1696maxresident)k
+0inputs+0outputs (0major+78minor)pagefaults 0swaps
+-e 
+
+
+-e 2. Performance of optimized code
+8.72user 0.00system 0:08.72elapsed 100%CPU (0avgtext+0avgdata 1696maxresident)k
+0inputs+0outputs (0major+77minor)pagefaults 0swaps
+-e 
+
+
+Performance 1 done

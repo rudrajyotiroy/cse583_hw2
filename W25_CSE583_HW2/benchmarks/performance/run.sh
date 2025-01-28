@@ -4,11 +4,11 @@
 # e.g. sh run.sh hw2correct1
 
 # ACTION NEEDED: If the path is different, please update it here.
-PATH2LIB=""        # Specify your build directory in the project
+PATH2LIB=../../build/hw2pass/HW2Pass.so       # Specify your build directory in the project
 
 # ACTION NEEDED: Choose the correct pass when running.
-PASS=fplicm-correctness                   # Choose either -fplicm-correctness ...
-# PASS=fplicm-performance                 # ... or -fplicm-performance
+# PASS=fplicm-correctness                   # Choose either -fplicm-correctness ...
+PASS=fplicm-performance                 # ... or -fplicm-performance
 
 # Delete outputs from previous runs. Update this when you want to retain some files.
 rm -f default.profraw *_prof *_fplicm *.bc *.profdata *_output *.ll
@@ -36,6 +36,8 @@ llvm-profdata merge -o ${1}.profdata default.profraw
 
 # The "Profile Guided Optimization Use" pass attaches the profile data to the bc file.
 opt -passes="pgo-instr-use" -o ${1}.profdata.bc -pgo-test-profile-file=${1}.profdata < ${1}.ls.prof.bc > /dev/null
+
+echo "Before plugin load"
 
 # We now use the profile augmented bc file as input to your pass.
 opt -load-pass-plugin="${PATH2LIB}" -passes="${PASS}" ${1}.profdata.bc -o ${1}.fplicm.bc > /dev/null

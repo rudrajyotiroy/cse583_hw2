@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -Wl,--gc-sections -shared  -o HW2Pass.so CMakeFiles/HW2Pass.dir/hw2pass.cpp.o  -Wl,-rpath,"\$ORIGIN/../lib:" 
