@@ -48,7 +48,42 @@ using namespace llvm;
 
 namespace {
   struct HW2CorrectnessPass : public PassInfoMixin<HW2CorrectnessPass> {
-
+    
+    // (both directions, because of some ultra-efficient programmers who may use last loop's value in next loop)
+    // Check if there is any store (or indirect store thorugh address calculation) that might change value of this load on frequent path
+    bool checkStoreOnFrequentPath (Value *addr, std::unordered_set<llvm::BasicBlock *> frequentPathBlocks) {
+      bool virgin = true;
+      #ifdef VERBOSE_MAX
+      errs() << " src : " << loadSrc << ", dest : ";
+      #endif
+      for (BasicBlock *BB : frequentPathBlocks){
+        for (auto &II : *BB){
+          // Check if any store writes to the address it reads from
+          if(II.getOpcode() == Instruction::Store){
+            Value *storeDest = II.getOperand(1); // Store operand 0: value to be stored, 1: destination
+            #ifdef VERBOSE_MAX
+              errs() << ", " << storeDest;
+            #endif
+            if(addr == storeDest){
+              virgin = false;
+            }
+          }
+          else if (II.getOpcode() == Instruction::GetElementPtr){
+            Value *storeDest = llvm::dyn_cast<llvm::GetElementPtrInst>(&II); // Pointer address gets stored here
+            #ifdef VERBOSE_MAX
+              errs() << ";; " << storeDest;
+            #endif
+            if(addr == storeDest){            
+              // Check if any of the input operands have a store
+              for (auto It = llvm::dyn_cast<llvm::GetElementPtrInst>(&II)->idx_begin(); It != llvm::dyn_cast<llvm::GetElementPtrInst>(&II)->idx_end(); ++It) {
+                if (checkStoreOnFrequentPath(*It, frequentPathBlocks)) virgin = false;
+              }
+            }
+          }
+        }
+      }
+      return virgin;
+    }
 
     PreservedAnalyses run(Function &F, FunctionAnalysisManager &FAM) {
       llvm::BlockFrequencyAnalysis::Result &bfi = FAM.getResult<BlockFrequencyAnalysis>(F);
@@ -105,28 +140,29 @@ namespace {
                 continue;
               }
               // Instruction is load, we need to check if it's value changes along with path
-              // (both directions, because of some ultra-efficient programmers who may use last loop's value in next loop)
-              bool virgin = true;
               Value *loadSrc = I.getOperand(0);
-              for (BasicBlock *BB : frequentPathBlocks){
-                for (auto &II : *BB){
-                  // Check if any store writes to the address it reads from
-                  if(II.getOpcode() == Instruction::Store){
-                    Value *storeDest = II.getOperand(1);
-                    if(loadSrc == storeDest){
-                      virgin = false;
-                    }
-                  }
-                }
-              }
-
-              if(virgin) hoistableLoads.push_back(&I);
+              if(checkStoreOnFrequentPath(loadSrc, frequentPathBlocks)) {
+                hoistableLoads.push_back(&I);
               #ifdef VERBOSE
+                errs() << "\n ** ";
                 I.print(errs());  // Print to stderr
                 errs() << "   ";
               #endif
+              }
             }
           }
+          // Get terminator (last instruction of the pre-header before branch)
+          llvm::Instruction *terminator;
+          BasicBlock *preheader = currLoop->getLoopPreheader();
+          if(preheader != NULL)
+            terminator = preheader->getTerminator();
+          else{
+            #ifdef VERBOSE
+              errs() << " Current loop does not have pre-header! Investigate";
+            #endif
+            continue;
+          }
+
         
       }
 
