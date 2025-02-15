@@ -50,7 +50,7 @@ namespace {
   struct HW2CorrectnessPass : public PassInfoMixin<HW2CorrectnessPass> {
     
     // (both directions, because of some ultra-efficient programmers who may use last loop's value in next loop)
-    // Check if there is any store (or indirect store thorugh address calculation) that might change value of this load on frequent path
+    // Check if there is any store (or recursive check for indirect store thorugh address calculation) that might change value of this load on frequent path
     bool checkStoreOnFrequentPath (Value *addr, std::unordered_set<llvm::BasicBlock *> frequentPathBlocks) {
       bool virgin = true;
       #ifdef VERBOSE_MAX
@@ -163,6 +163,22 @@ namespace {
             continue;
           }
 
+          for (llvm::Instruction *origLoad: hoistableLoads){
+
+            // Pre-header actions first
+            #ifdef VERBOSE
+              errs() << " \n*** Performing PreHeader actions: \n";
+            #endif
+            // Create alloca instr before terminator (insert alloca %var1 before terminator)
+            llvm::AllocaInst *AI = new llvm::AllocaInst(origLoad->getType(), 0, nullptr, llvm::dyn_cast<llvm::LoadInst>(origLoad)->getAlign(), "temp", terminator); 
+            // Hoist the load (insert %4 = load %j before terminator)
+            llvm::LoadInst *LI_clone = llvm::dyn_cast<llvm::LoadInst>(origLoad->clone()); // Only hoisting loads here
+            LI_clone->insertBefore(terminator);
+            // Create store instr storing value of load in the alloca var (insert store %4, %var1 before terminator) %4 is LI_clone value, %var1 is Alloca value
+            llvm::StoreInst *SI = new llvm::StoreInst(LI_clone, AI, terminator);
+
+            // Replace (%1 = load %j) in loop body to clone (%1 = load %var1) and (store %2, %j) to (store %2, %var1)
+          }
         
       }
 

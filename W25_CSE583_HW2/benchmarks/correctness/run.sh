@@ -64,6 +64,13 @@ else
     echo -e "\n\n"
 fi
 
+# Repeat profiling for viz script
+opt -passes='pgo-instr-gen,instrprof' ${1}.fplicm.bc -o ${1}.fplicm.prof.bc
+clang -fprofile-instr-generate ${1}.fplicm.prof.bc -o ${1}_newprof
+./${1}_newprof > newfound_output
+llvm-profdata merge -o ${1}.profdata.new default.profraw
+opt -passes="pgo-instr-use" -o ${1}.profdata.new.bc -pgo-test-profile-file=${1}.profdata.new < ${1}.fplicm.prof.bc > /dev/null
+
 # Cleanup: Remove this if you want to retain the created files (for example, for viz.sh). 
 # And you do need to.
 
