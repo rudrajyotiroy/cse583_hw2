@@ -170,14 +170,41 @@ namespace {
               errs() << " \n*** Performing PreHeader actions: \n";
             #endif
             // Create alloca instr before terminator (insert alloca %var1 before terminator)
-            llvm::AllocaInst *AI = new llvm::AllocaInst(origLoad->getType(), 0, nullptr, llvm::dyn_cast<llvm::LoadInst>(origLoad)->getAlign(), "temp", terminator); 
-            // Hoist the load (insert %4 = load %j before terminator)
+            llvm::AllocaInst *AI = new llvm::AllocaInst(origLoad->getType(), 0, nullptr, llvm::dyn_cast<llvm::LoadInst>(origLoad)->getAlign(), "newreg_load_src", terminator); 
+            // Hoist the load (insert %1 = load %j before terminator)
             llvm::LoadInst *LI_clone = llvm::dyn_cast<llvm::LoadInst>(origLoad->clone()); // Only hoisting loads here
             LI_clone->insertBefore(terminator);
-            // Create store instr storing value of load in the alloca var (insert store %4, %var1 before terminator) %4 is LI_clone value, %var1 is Alloca value
+            // Create store instr storing value of load in the alloca var (insert store %1, %var1 before terminator) %1 is LI_clone value, %var1 is Alloca value (AI)
             llvm::StoreInst *SI = new llvm::StoreInst(LI_clone, AI, terminator);
 
-            // Replace (%1 = load %j) in loop body to clone (%1 = load %var1) and (store %2, %j) to (store %2, %var1)
+            // Create a new load instruction that replaces the original load instruction in loop and uses var1 ((%4 = load %var1) instead of (%1 = load %j))
+            llvm::LoadInst *origLoad_replacement = new llvm::LoadInst(origLoad->getType(), AI, "newreg_load_dst", origLoad->getNextNode());
+            for (llvm::Use &U: origLoad->uses()){
+              U.getUser()->replaceUsesOfWith(origLoad, origLoad_replacement);
+            }
+            
+
+            // Finally, replace all uses of %1 with %4 and all stores of %j with %var1 (In performance mode also recompute all steps for var1)
+            for (llvm::BasicBlock *BB: currLoop->getBlocks()){
+              for (llvm::Instruction &I: *BB){
+                if (I.getOpcode() == Instruction::Load){
+                  #ifdef VERBOSE_MAX
+                    errs() << " \nPatching a load \n";
+                  #endif
+                }
+                else if (I.getOpcode() == Instruction::Store){
+                  #ifdef VERBOSE_MAX
+                    errs() << " \nPatching a store \n";
+                  #endif
+                  // If I stores to original load src, then instead store to replacement load src
+                  if(I.getOperand(1) == origLoad->getOperand(0)){
+                    I.replaceUsesOfWith(origLoad->getOperand(0), origLoad_replacement->getOperand(0));
+                  }
+                }
+              }
+            }
+
+            origLoad->eraseFromParent(); // In example, erased instr is %13 = load i32, ptr %7, align 4
           }
         
       }

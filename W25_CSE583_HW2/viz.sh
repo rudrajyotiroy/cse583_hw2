@@ -6,9 +6,12 @@ make
 echo "Compile done"
 cd ../benchmarks/correctness
 rm -f default.profraw *_prof *_fplicm *.bc *.profdata *_output *.ll
-sh run.sh hw2correct2
-sh viz.sh hw2correct2
-echo "Correctness 2 done"
+# sh run.sh hw2correct2
+# sh viz.sh hw2correct2
+# echo "Correctness 2 done"
+sh run.sh hw2correct5
+sh viz.sh hw2correct5
+echo "Correctness 4 done"
 
 # For later
 # rm -f default.profraw *_prof *_fplicm *.bc *.profdata *_output *.ll
